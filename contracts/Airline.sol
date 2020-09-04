@@ -26,8 +26,8 @@ contract Airline{
     constructor() public {
         owner = msg.sender;
         flights.push(Flight('Tokio', 4 ether));
-        flights.push(Flight('Berlin', 1 ether));
-        flights.push(Flight('Madrid', 2 ether));
+        flights.push(Flight('Berlin', 5 ether));
+        flights.push(Flight('Madrid', 3 ether));
     }
 
     function buyFlight(uint flightIndex) public payable {
