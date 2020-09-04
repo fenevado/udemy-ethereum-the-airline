@@ -45,7 +45,7 @@ contract Airline{
 
     function totalFlights() public view returns(uint) {
         return flights.length;
-    }    
+    }
 
     function redeemLoyaltyPoints() public {
         Customer storage customer = customers[msg.sender];
