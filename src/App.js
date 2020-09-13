@@ -44,6 +44,10 @@ export class App extends Component {
             flights: f
         });
     }
+    
+    async buy(flightIndex, flight){
+        await this.airlineService.buyFLight(flightIndex, this.state.account, flight.price);
+    }
 
     async getBalance() {
         var weiBalance = await this.web3.eth.getBalance(this.state.account);
@@ -51,8 +55,6 @@ export class App extends Component {
         this.setState({
             balance: etherBalance
         });
-
-        
     }
 
     async load() {
@@ -82,11 +84,16 @@ export class App extends Component {
             <div className="row">
                 <div className="col-sm">
                     <Panel title="Available flights">
-                        { this.state.flights.map((flight, i) => {
-                            return <div key={i}>
-                                <span>{ flight.name } - { this.toEther(flight.price) } ETHER</span>
-                            </div>
-                        })}
+                        <table>
+                            <tbody>
+                            { this.state.flights.map((flight, i) => {
+                                return <tr key={i}>
+                                    <td><span>{ flight.name } - { this.toEther(flight.price) } ETHER</span></td>
+                                    <td><button className="btn btn-success btn-sm text-white" onClick={() => this.buy(i, flight)}>Purchase</button></td>
+                                </tr>
+                            })}
+                            </tbody>
+                        </table>
 
                     </Panel>
                 </div>

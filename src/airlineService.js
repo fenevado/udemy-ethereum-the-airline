@@ -33,5 +33,12 @@ export class AirlineService {
         })
     }
 
+    async buyFLight(flightIndex, from, value){
+        console.log(flightIndex);
+        console.log(from);
+        console.log(value);
+        return this.contract.buyFlight(flightIndex, { from, value });
+    }
+
 }
 
