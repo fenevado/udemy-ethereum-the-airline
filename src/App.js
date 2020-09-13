@@ -16,7 +16,9 @@ export class App extends Component {
         this.state = {
             account: undefined,
             balance: 0,
-            flights: []
+            flights: [],
+            customerFlights: [],
+            refundable: 0
         }
     }
 
@@ -28,6 +30,33 @@ export class App extends Component {
         this.airlineService = new AirlineService(this.airline);
         
         var account = (await this.web3.eth.getAccounts())[0];
+
+        // deprecated
+        // this.web3.currentProvider.publicConfigStore.on('update', async function(event){
+            // this.setState({
+            //     account: event.selectedAddress.toLowerCase()
+            // }, () => {
+            //     this.load()
+            // });
+            
+        // });
+
+        ethereum.on('accountsChanged', (accounts) => {
+            this.setState({
+                account: accounts[0]
+            }, () => {
+                this.load();
+            })
+        });
+
+        // para otros cambios
+        ethereum.on('chainChanged', (chainId) => {
+            // Handle the new chain.
+            // Correctly handling chain changes can be complicated.
+            // We recommend reloading the page unless you have a very good reason not to.
+            window.location.reload();
+        });
+          
 
         this.setState({
             account: account.toLowerCase()
@@ -43,6 +72,18 @@ export class App extends Component {
         this.setState({
             flights: f
         });
+    }
+
+    async getRefundable() {
+        var ref = await this.airlineService.getRefundableEther(this.state.account);
+        var refE = this.toEther(ref);
+        this.setState({
+            refundable: refE
+        })
+    }
+
+    async refound(){
+        await this.airlineService.refound(this.state.account);
     }
     
     async buy(flightIndex, flight){
@@ -60,6 +101,15 @@ export class App extends Component {
     async load() {
         this.getBalance();
         this.getFlights();
+        this.getCustomerFlights();
+        this.getRefundable();
+    }
+
+    async getCustomerFlights(){
+        var f = await this.airlineService.getCustomerFlights(this.state.account);
+        this.setState({
+            customerFlights: f
+        })
     }
 
     render() {
@@ -77,7 +127,8 @@ export class App extends Component {
                 </div>
                 <div className="col-sm">
                     <Panel title="Loyalty points - refundable ether">
-                        
+                        <span>Refundable ether: { this.state.refundable } ETHER</span>
+                        <button onClick={ () => this.refound() } className="btn-success btn-sm btn text-white" >Refound</button>
                     </Panel>
                 </div>
             </div>
@@ -99,7 +150,15 @@ export class App extends Component {
                 </div>
                 <div className="col-sm">
                     <Panel title="Your flights">
-
+                    <table>
+                            <tbody>
+                            { this.state.customerFlights.map((flight, i) => {
+                                return <tr key={i}>
+                                    <td><span>{ flight.name } - { this.toEther(flight.price) } ETHER</span></td>                                    
+                                </tr>
+                            })}
+                            </tbody>
+                        </table>
                     </Panel>
                 </div>
             </div>
