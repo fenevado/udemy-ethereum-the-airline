@@ -16,7 +16,7 @@ contract Airline{
     mapping(address => Flight[]) public customerFlights;
     mapping(address => uint) public customerTotalFlights;
 
-    event FlightPurchased(address indexed customer, uint price);
+    event FlightPurchased(address indexed customer, uint price, string flight);
 
     address public owner;
     Flight[] public flights;
@@ -40,7 +40,7 @@ contract Airline{
         customerFlights[msg.sender].push(flight);
         customerTotalFlights[msg.sender]++;
 
-        emit FlightPurchased(msg.sender, flight.price);
+        emit FlightPurchased(msg.sender, flight.price, flight.name);
     }
 
     function totalFlights() public view returns(uint) {

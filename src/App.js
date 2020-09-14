@@ -3,6 +3,7 @@ import Panel from "./Panel";
 import getWeb3 from './getweb3';
 import AirlineContract from './airline';
 import { AirlineService } from './airlineService';
+import { ToastContainer } from 'react-toastr';
 
 export class App extends Component {
 
@@ -30,6 +31,19 @@ export class App extends Component {
         this.airlineService = new AirlineService(this.airline);
         
         var account = (await this.web3.eth.getAccounts())[0];
+
+        var flightPurchased = this.airline.FlightPurchased();
+        flightPurchased.watch(function(error, result){
+            const { customer, price, flight } = result.args;
+            if (customer == this.state.account){
+                console.log('FLght purchased by you.');
+                console.log(`TO: ${flight} - COSTS: ${price}.`);
+            }
+            else{
+                this.container.success(`A user bought a fly to ${flight} by ${price}`, 'Information')
+            }
+
+        }.bind(this));
 
         // deprecated
         // this.web3.currentProvider.publicConfigStore.on('update', async function(event){
@@ -162,6 +176,8 @@ export class App extends Component {
                     </Panel>
                 </div>
             </div>
+            <ToastContainer ref={ (input) => this.container = input } className="toast-top-right">
+            </ToastContainer>
         </React.Fragment>
     }
 }
