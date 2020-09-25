@@ -21,13 +21,14 @@ contract Airline{
     address public owner;
     Flight[] public flights;
 
-    uint pointValue = 0.5 ether;
+    uint pointValue = 0.001 ether;
 
     constructor() public {
         owner = msg.sender;
-        flights.push(Flight('Tokio', 4 ether));
-        flights.push(Flight('Berlin', 5 ether));
-        flights.push(Flight('Madrid', 3 ether));
+        flights.push(Flight('Tokio', 0.04 ether));
+        flights.push(Flight('Berlin', 0.05 ether));
+        flights.push(Flight('Madrid', 0.03 ether));
+        flights.push(Flight('Buenos Aires', 0.0015 ether));
     }
 
     function buyFlight(uint flightIndex) public payable {
